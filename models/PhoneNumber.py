@@ -13,29 +13,29 @@ class PhoneNumber:
 
         if len(self.raw_numbers) != 10:
             # too bad we don't have front-end devs to make our input form enforce formatting
-            self.set_country_code()
-            self.set_extension_code()
+            self._set_country_code()
+            self._set_extension_code()
 
         start = 0 if self.country_code is None else len(self.country_code)
         self.area_code      = self.raw_numbers[start:start+3]
         self.prefix         = self.raw_numbers[start+3:start+6]
         self.line_number    = self.raw_numbers[start+6:start+10]
 
-        self.check_doctor_office()
+        self._check_doctor_office()
 
-    def set_country_code(self):
+    def _set_country_code(self):
         plusle = self.raw_text.find("+", 0, 3)
         minun  = self.raw_text.find("-", 0, 3)
         if plusle > -1 or minun > -1:
             idx = plusle if plusle > -1 else minun  # set which one we're looking for
             self.country_code = re.sub("[^0-9]", "", self.raw_text[:idx])
 
-    def set_extension_code(self):
+    def _set_extension_code(self):
         ext_index   = self.raw_text.find("x")
         if ext_index > -1:
             self.extension = re.sub("[^0-9]", "", self.raw_text[ext_index:])  # just parse it from the end of the string
 
-    def check_doctor_office(self):
+    def _check_doctor_office(self):
         # what is this? the instructions to schedule a doctor's appointment?
         # no but really.. I know this is cheating but it's not even clearly extension 1101
         if self.raw_text == "9346951114,1,1,#,0,1":

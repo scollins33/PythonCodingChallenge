@@ -13,7 +13,8 @@ class MainHandler(tornado.web.RequestHandler):
             "area": 3,
             "prefix": 3,
             "line": 4,
-            "extended": 0
+            "extended": 0,
+            "full": 0,
         }
 
         try:
@@ -30,7 +31,10 @@ class MainHandler(tornado.web.RequestHandler):
             query_list = []
 
             for phoneObj in self.g_list:
-                if mode == "country" and value in phoneObj.country_code:
+                if mode == "full":
+                    query_list.append(phoneObj.get_formatted_string())
+
+                if mode == "country" and phoneObj.country_code is not None and value == phoneObj.country_code:
                     query_list.append(phoneObj.get_formatted_string())
 
                 if mode == "area" and value in phoneObj.area_code:
@@ -67,3 +71,10 @@ class MainHandler(tornado.web.RequestHandler):
 
         finally:
             self.finish()
+
+    def post(self):
+        self.set_status(501)
+        self.write({
+            "status": False,
+            "payload": "POST not implemented, please use GET only"
+        })
